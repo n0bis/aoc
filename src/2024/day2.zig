@@ -12,11 +12,14 @@ pub fn validLevels(levels: std.ArrayList(std.ArrayList(i32))) void {
 
 pub fn validLevel(level: []const i32) bool {
     const is_inc = level[1] > level[0];
-    for (0..level.len - 1) |i| {
-        const diff = @abs(level[i + 1] - level[i]);
+    var window_iter = std.mem.window(i32, level, 2, 1);
+    while (window_iter.next()) |pair| {
+        const current = pair[0];
+        const next = pair[1];
+        const diff = @abs(next - current);
         if (diff < 1 or diff > 3) return false;
-        if (is_inc and level[i + 1] <= level[i]) return false;
-        if (!is_inc and level[i + 1] >= level[i]) return false;
+        if (is_inc and next <= current) return false;
+        if (!is_inc and next >= current) return false;
     }
     return true;
 }
