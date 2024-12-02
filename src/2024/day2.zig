@@ -2,12 +2,28 @@ const std = @import("std");
 const print = std.debug.print;
 const input = @embedFile("day2.txt");
 
-pub fn validLevels(levels: std.ArrayList(std.ArrayList(i32))) void {
+pub fn validLevels(levels: std.ArrayList(std.ArrayList(i32))) !void {
     var safe: u32 = 0;
     for (levels.items) |item| {
-        if (validLevel(item.items)) safe += 1;
+        if (validLevel(item.items)) {
+            safe += 1;
+            continue;
+        }
+        if (try canBecomeSafe(item)) safe += 1;
     }
     print("safe count: {d}\n", .{safe});
+}
+
+pub fn canBecomeSafe(level: std.ArrayList(i32)) !bool {
+    for (0..level.items.len) |i| {
+        var copy = try level.clone();
+        _ = copy.orderedRemove(i);
+        const modified_level = copy;
+        if (validLevel(modified_level.items)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 pub fn validLevel(level: []const i32) bool {
@@ -39,5 +55,5 @@ pub fn main() !void {
         }
         try levels.append(level);
     }
-    validLevels(levels);
+    try validLevels(levels);
 }
