@@ -52,13 +52,43 @@ const StateMachine = struct {
     }
 };
 
-pub fn main() !void {
+fn part1(line: []const u8) !u64 {
     var sm = StateMachine.init();
-    var it = std.mem.tokenizeScalar(u8, input, '\n');
-    while (it.next()) |line| {
-        for (line) |c| {
+    for (line) |c| {
+        sm.scan(c);
+    }
+    return sm.sum;
+}
+
+fn part2(line: []const u8) !u64 {
+    var sum: u64 = 0;
+    var dont_it = std.mem.splitSequence(u8, line, "don't");
+    var is_first_run = true;
+
+    while (dont_it.next()) |dont| {
+        var do_idx: usize = 0;
+        if (!is_first_run) {
+            do_idx = std.mem.indexOf(u8, dont, "do") orelse dont.len - 1;
+        }
+        is_first_run = false;
+
+        var sm = StateMachine.init();
+        for (dont[do_idx..]) |c| {
             sm.scan(c);
         }
+        sum += sm.sum;
     }
-    print("Sum: {}\n", .{sm.sum});
+    return sum;
+}
+
+pub fn main() !void {
+    var part1_sum: usize = 0;
+    var part2_sum: usize = 0;
+    var it = std.mem.tokenizeScalar(u8, input, '\n');
+    while (it.next()) |line| {
+        part1_sum += try part1(line);
+    }
+    part2_sum += try part2(input);
+    print("Sum part1: {}\n", .{part1_sum});
+    print("Sum part2: {}\n", .{part2_sum});
 }
