@@ -53,6 +53,6 @@ pub fn main() !void {
         count.value_ptr.* += 1;
     }
 
-    const count = try count_stones(&stones, 25);
+    const count = try count_stones(&stones, 75);
     print("Stones: {}\n", .{count});
 }
