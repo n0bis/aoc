@@ -82,8 +82,8 @@ pub fn main() !void {
         for (line, 0..) |plant, col| {
             const idx = row * width + col;
             for (directions) |dir| {
-                const new_row = @as(i8, @intCast(row)) + dir[0];
-                const new_col = @as(i8, @intCast(col)) + dir[1];
+                const new_row = @as(isize, @intCast(row)) + dir[0];
+                const new_col = @as(isize, @intCast(col)) + dir[1];
                 if (new_row < 0 or new_row >= grid.items.len or new_col < 0 or new_col >= width or grid.items[@as(usize, @intCast(new_row))][@as(usize, @intCast(new_col))] != plant) {
                     total_price += @intCast(union_find.sizeOf(idx));
                 }
