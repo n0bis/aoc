@@ -3,7 +3,7 @@
 #define MAX_LINE_LENGTH 5
 
 int main() {
-  FILE* file = fopen("input.txt", "r");
+  FILE* file = fopen("day1.txt", "r");
   int dial = 50;
   int pwd = 0;
 
@@ -17,18 +17,10 @@ int main() {
   int num;
   while (fgets(line, sizeof(line), file) != NULL) {
     if (sscanf(line, "%c%d", &dir, &num) == 2) {
-      int passes = 0;
-      switch (dir) {
-        case 'L':
-          dial = (dial - num + 100) % 100;
-          break;
-        case 'R':
-          dial = (dial + num) % 100;
-          break;
-      }
-      if (dial == 0 && passes == 0) {
-        pwd++;
-      }
+      dial = (dir == 'L') ? (100 - dial) % 100 : dial;
+      pwd += ((dial + num) / 100);
+      dial = (dial + num) % 100;
+      dial = (dir == 'L') ? (100 - dial) % 100 : dial;
       printf("Dial: %d\n", dial);
     }
   }
