@@ -88,5 +88,10 @@ int main() {
     }
   }
   printf("Available ingredient IDs that are fresh: %lld\n", available);
+  long long fresh = 0;
+  for (long long i = 0; i < range_count; i++) {
+    fresh += (ingredients[i][1] - ingredients[i][0] + 1);
+  }
+  printf("Total number of fresh ingredients: %lld\n", fresh);
   return 0;
 }
