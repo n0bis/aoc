@@ -7,53 +7,53 @@
 #define MAX_LINE_LENGTH 3800
 
 int main() {
-  FILE* file = fopen("input.txt", "r");
+  FILE* file = fopen("day6.txt", "r");
 
   if (file == NULL) {
     perror("Error opening file");
     return -1;
   }
 
-  long grid[MAX_COLS][MAX_ROWS] = {0};
-  int row = 0;
-  char line[MAX_LINE_LENGTH];
-  char ops[MAX_COLS];
-  while (fgets(line, sizeof(line), file) != NULL) {
-    if(strchr(line, '+') || strchr(line, '*')) {
-      long op_col = 0;
-      for (long i = 0; line[i] != '\0' && op_col < MAX_COLS; i++) {
-        if (line[i] == '+' || line[i] == '*') {
-          ops[op_col++] = line[i];
-        }
-      }
-      break;
-    }
-    char *token = strtok(line, " ");
-    int col = 0;
-    while (token != NULL && col < MAX_COLS) {
-      grid[col++][row] = atol(token);
-      token = strtok(NULL, " ");
-    }
-    row++;
+  char lines[MAX_ROWS][MAX_LINE_LENGTH];
+  int row_count = 0;
+
+  while (fgets(lines [row_count], MAX_LINE_LENGTH, file) != NULL) {
+    row_count++;
   }
   fclose(file);
 
+  int max_len = strlen(lines[0]);
+  char op = '+';
   long long grand_total = 0;
-  for (long j = 0; j < MAX_COLS; j++) {
-    long long sum = grid[j][0];
-    for (int i = 1; i < row; i++) {
-      char op = ops[j];
-      switch (op) {
-        case '+':
-          sum += grid[j][i];
-          break;
-        case '*':
-          sum *= grid[j][i];
-          break;
+  long long sum = 0;
+
+  for (int col = 0; col < max_len; col++) {
+    char last = lines[row_count - 1][col];
+
+    if (last != ' ') {
+      grand_total += sum;
+      sum = 0;
+      op = last;
+    }
+
+    long num = 0;
+    for (int row = 0; row < row_count; row++) {
+      unsigned char ch = lines[row][col];
+      if (ch >= '0' && ch <= '9') {
+        num = num * 10 + (ch - '0');
       }
     }
-    grand_total += sum;
+
+    if (num == 0) continue;
+
+    if (sum == 0) {
+      sum = num;
+    } else {
+      sum = (op == '+') ? (sum + num) : (sum * num);
+    }
   }
+
+  grand_total += sum;
 
   printf("Grand Total: %lld\n", grand_total);
 
