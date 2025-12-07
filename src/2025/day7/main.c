@@ -9,6 +9,30 @@
 #define SPLIT '^'
 #define START 'S'
 
+long long timelines(char *grid, int rows, int cols, int start) {
+  long long dp[MAX_VERTICES] = {0};
+
+  for (int col = 0; col < cols; col++) {
+    dp[(rows - 1) * cols + col] = 1;
+  }
+
+  for (int row = rows - 2; row >= 0; row--) {
+    for (int col = 0; col < cols; col++) {
+      int pos = row * cols + col;
+      int down = pos + cols;
+
+      if (grid[pos] == SPLIT) {
+        long long left = (col > 0) ? dp[down - 1] : 0;
+        long long right = (col < cols - 1) ? dp[down + 1] : 0;
+        dp[pos] = left + right;
+      } else {
+        dp[pos] = dp[down];
+      }
+    }
+  }
+  return dp[start];
+}
+
 int bfs(char *grid, int rows, int cols, int start) {
   int visited[MAX_VERTICES] = {0};
   int queue[MAX_VERTICES];
@@ -20,7 +44,7 @@ int bfs(char *grid, int rows, int cols, int start) {
 
   while (front < rear) {
     int pos = queue[front++];
-    
+
     if (visited[pos] || pos >= rows * cols) {
       continue;
     }
@@ -28,9 +52,9 @@ int bfs(char *grid, int rows, int cols, int start) {
     visited[pos] = 1;
 
     if (grid[pos] == SPLIT) {
+      splitted++;
       queue[rear++] = pos - 1; // LEFT
       queue[rear++] = pos + 1; // RIGHT
-      splitted++;
     } else {
       queue[rear++] = pos + cols; // DOWN
     }
@@ -39,7 +63,7 @@ int bfs(char *grid, int rows, int cols, int start) {
 }
 
 int main() {
-  FILE* file = fopen("input.txt", "r");
+  FILE* file = fopen("day7.txt", "r");
 
   if (file == NULL) {
     perror("Error opening file");
@@ -68,7 +92,9 @@ int main() {
   }
 
   int splitted = bfs(grid, row_count, col_count, start_pos);
+  long long timelines_count = timelines(grid, row_count, col_count, start_pos);
   printf("Splitted: %d\n", splitted);
+  printf("Timelines: %lld\n", timelines_count);
 
   return 0;
 }
