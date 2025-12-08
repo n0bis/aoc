@@ -71,22 +71,30 @@ int main() {
 
   static int connections[MAX_POINTS][MAX_POINTS] = {0};
   
-  int made_connections = 0;
-  for (int i = 0; i < edge_count && made_connections < 1000; i++) {
+  int last_u = -1;
+  int last_v = -1;
+  for (int i = 0; i < edge_count; i++) {
     int u = edges[i][0];
     int v = edges[i][1];
     if (!connections[u][v]) {
       connections[u][v] = 1;
       connections[v][u] = 1;
-      unionSet(u, v);
-      made_connections++; 
+      
+      if (findParent(u) != findParent(v)) {
+        unionSet(u, v);
+        last_u = u;
+        last_v = v;
+        
+        if (size[findParent(0)] == num_points) {
+          break;
+        }
+      }
     }
   }
 
-  qsort(size, num_points, sizeof(int), desc_comparator);
-
-  long long result = (long long)size[0] * size[1] * size[2];
-  printf("Three largest: %d × %d × %d = %lld\n", size[0], size[1], size[2], result);
+  long long result = (long long)points[last_u][0] * points[last_v][0];
+  printf("Last connection: %d and %d\n", last_u, last_v);
+  printf("X coordinates: %d × %d = %lld\n", points[last_u][0], points[last_v][0], result);
 
   return 0;
 }
